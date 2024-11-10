@@ -1,0 +1,27 @@
+{
+  "name": "chrome-trex-game",
+  "version": "1.0.0",
+  "description": "Game of a T-Rex dinosaur that jumps and avoids obstacles",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack serve --open"
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "Gerardo Garcia Lopez",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^5.6.0",
+    "source-map-loader": "^4.0.1",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}
