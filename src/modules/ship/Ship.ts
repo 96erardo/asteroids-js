@@ -28,7 +28,7 @@ export class Ship implements Entity {
     const dx = cursor.x - (CANVAS_WIDTH / 2)
     const dy = - (cursor.y - (CANVAS_HEIGHT / 2))
 
-    const angle = dx > 0 ? (Math.atan(dy / dx) - 1.5708) : (Math.atan(dy / dx) + 1.5708);
+    const angle =  -(Math.atan2(dy, dx) - 1.5708);
 
     return new Ship(this.width, this.height, angle, this.x, this.y);
   }
@@ -39,7 +39,7 @@ export class Ship implements Entity {
     ctx.save()
 
     ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
-    ctx.rotate(-this.angle);
+    ctx.rotate(this.angle);
 
     ctx.beginPath();
     ctx.moveTo(-(this.width / 2), this.height / 2);
