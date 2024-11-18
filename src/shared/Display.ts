@@ -21,7 +21,8 @@ export class Display {
     this.ctx.fillStyle = 'black';
     this.ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     
-    state.ship.draw(this.ctx);
     state.asteroids.forEach(a => a.draw(this.ctx));
+    state.bullets.draw(this.ctx);
+    state.ship.draw(this.ctx);
   }
 }

@@ -11,11 +11,11 @@ const display = new Display();
 let lastTime = 0;
 
 document.addEventListener('keydown', (e) => {
-  keys.add(e.key)
+  keys.add(e.code)
 });
 
 document.addEventListener('keyup', (e) => {
-  keys.delete(e.key)
+  keys.delete(e.code)
 });
 
 display.canvas.addEventListener('mousemove', (e) => {
