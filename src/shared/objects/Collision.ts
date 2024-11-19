@@ -16,14 +16,6 @@ export class Collision {
   ): State {
     const withShip = quadTree.retrieve(ship);
 
-    if (withShip.length > 0) {
-      withShip.forEach((e, i) => {
-        if (e.name === EntityType.Asteroid) {
-          console.log(i, e.x, e.y, e.width, e.height, ship.x, ship.y, ship.width, ship.height)
-        }
-      });
-    }
-
     const isColliding = withShip.some((entity) => {
       return (
         entity.name === EntityType.Asteroid &&

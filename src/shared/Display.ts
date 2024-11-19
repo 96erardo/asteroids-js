@@ -26,8 +26,6 @@ export class Display {
     state.bullets.draw(this.ctx);
     state.ship.draw(this.ctx);
 
-    // console.clear();
-
     // state.quadTree.log();
   }
 }
