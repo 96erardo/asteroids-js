@@ -62,6 +62,10 @@ export class Ship implements Entity {
       }
     }
 
+    if (status === ShipStatus.Colliding) {
+      status = ShipStatus.Ready;
+    }
+
     const ship = new Ship(
       this.width, 
       this.height, 
@@ -105,16 +109,14 @@ export class Ship implements Entity {
     ctx.restore();
   }
 
-  onCollision (entity: EntityType) {
-    if (entity === EntityType.Asteroid) {
-      this.status = ShipStatus.Colliding;
+  clear () {
+    if (this.status === ShipStatus.Colliding) {
+      this.status = ShipStatus.Ready;
     }
   }
 
-  onNoCollision () {
-    if (this.status === ShipStatus.Colliding) {
-      this.status = ShipStatus.Ready; 
-    }
+  onCollision () {
+    this.status = ShipStatus.Colliding;
   }
 }
 

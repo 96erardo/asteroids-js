@@ -11,6 +11,10 @@ export interface Entity {
   update (dt: number, state: State, keys: Set<string>, cursor: Point): Entity;
 
   draw (ctx: CanvasRenderingContext2D): void;
+
+  clear (): void;
+
+  onCollision (): void;
 }
 
 export enum EntityType {

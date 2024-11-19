@@ -16,18 +16,27 @@ export class Collision {
   ): State {
     const withShip = quadTree.retrieve(ship);
 
-    const isColliding = withShip.some((entity) => {
-      return (
-        entity.name === EntityType.Asteroid &&
-        areRectsColliding(ship, entity)
-      )
+    withShip.forEach((entity) => {
+      if (entity.name === EntityType.Asteroid) {
+        if (areRectsColliding(ship, entity)) {
+          ship.onCollision();
+          entity.onCollision();
+        }
+      }
     })
 
-    if (isColliding) {
-      ship.onCollision(EntityType.Asteroid);
-    } else {
-      ship.onNoCollision();
-    }
+    bullets.list.forEach(bullet => {
+      const withBullet = quadTree.retrieve(bullet);
+
+      withBullet.forEach((entity) => {
+        if (entity.name === EntityType.Asteroid) {
+          if (areRectsColliding(bullet, entity)) {
+            bullet.onCollision();
+            entity.onCollision();
+          }
+        }
+      })
+    })
 
     return new State(ship, asteroids, bullets, quadTree);
   }

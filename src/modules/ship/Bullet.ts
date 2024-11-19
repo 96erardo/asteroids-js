@@ -11,6 +11,7 @@ import { ShipStatus } from './Ship';
 
 export class Bullet implements Entity {
   name: EntityType.Bullet;
+  status: BulletStatus;
   x: number;
   y: number;
   xSpeed: number;
@@ -24,9 +25,11 @@ export class Bullet implements Entity {
     y: number,
     angle: number,
     xSpeed?: number,
-    ySpeed?: number
+    ySpeed?: number,
+    status: BulletStatus = BulletStatus.Free,
   ) {
     this.name = EntityType.Bullet;
+    this.status = status;
     this.x = x;
     this.y = y;
 
@@ -40,6 +43,8 @@ export class Bullet implements Entity {
   }
 
   update (dt: number, state: State, keys: Set<string>, cursor: Point): Bullet {
+    this.clear();
+    
     let x = this.x;
     let y = this.y;
 
@@ -54,8 +59,8 @@ export class Bullet implements Entity {
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = 'white';
-    ctx.strokeStyle = 'white';
+    ctx.fillStyle = this.status === BulletStatus.Free ? 'white' : 'red';
+    ctx.strokeStyle = this.status === BulletStatus.Free ? 'white' : 'red';
 
     ctx.beginPath();
     ctx.ellipse(this.x, this.y, BULLET_RADIUS, BULLET_RADIUS, 0, 0, 2 * Math.PI);
@@ -71,22 +76,30 @@ export class Bullet implements Entity {
       (this.y < CANVAS_HEIGHT) 
     )
   }
+
+  clear () {
+    this.status = BulletStatus.Free;
+  }
+
+  onCollision () {
+    this.status = BulletStatus.Colliding;
+  }
 }
 
 export class Bullets {
-  bullets: Array<Bullet>;
+  list: Array<Bullet>;
 
-  constructor (bullets: Array<Bullet> = []) {
-    this.bullets = bullets;
+  constructor (list: Array<Bullet> = []) {
+    this.list = list;
   }
   
   update (dt: number, state: State, keys: Set<string>, cursor: Point): Bullets {
-    const bullets = this.bullets
+    const list = this.list
       .map(b => b.update(dt, state, keys, cursor))
       .filter(b => b.isIn());
 
     if (state.ship.status === ShipStatus.Firing) {
-      bullets.push(new Bullet(
+      list.push(new Bullet(
           (CANVAS_WIDTH / 2) - BULLET_RADIUS,
           (CANVAS_HEIGHT / 2) - BULLET_RADIUS,
           state.ship.angle
@@ -94,10 +107,15 @@ export class Bullets {
       )
     }
     
-    return new Bullets(bullets);
+    return new Bullets(list);
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    this.bullets.forEach(bullet => bullet.draw(ctx));
+    this.list.forEach(bullet => bullet.draw(ctx));
   }
+}
+
+export enum BulletStatus {
+  Free = "Free",
+  Colliding = "Colliding"
 }

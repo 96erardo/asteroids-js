@@ -5,6 +5,7 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../shared/constants";
 
 export class Asteroid implements Entity {
   name: EntityType.Asteroid
+  status: AsteroidStatus;
   x: number;
   y: number;
   xSpeed: number;
@@ -18,9 +19,11 @@ export class Asteroid implements Entity {
     xSpeed: number,
     ySpeed: number,
     width: number, 
-    height: number
+    height: number,
+    status: AsteroidStatus = AsteroidStatus.Free,
   ) {
     this.name = EntityType.Asteroid;
+    this.status = status;
     this.x = x;
     this.y = y;
     this.xSpeed = xSpeed;
@@ -30,6 +33,8 @@ export class Asteroid implements Entity {
   }
 
   update (dt: number, state: State, keys: Set<string>, cursor: Point): Asteroid {
+    this.clear();
+    
     let x = this.x;
     let y = this.y;
     let xSpeed = this.xSpeed;
@@ -71,9 +76,22 @@ export class Asteroid implements Entity {
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = this.status === AsteroidStatus.Free ? 'white' : 'red';
     ctx.strokeRect(this.x, this.y, this.width, this.height);
   }
+
+  clear () {
+    this.status = AsteroidStatus.Free;
+  }
+
+  onCollision () {
+    this.status = AsteroidStatus.Colliding;
+  }
+}
+
+export enum AsteroidStatus {
+  Free = "Free",
+  Colliding = "Colliding"
 }
 
 
