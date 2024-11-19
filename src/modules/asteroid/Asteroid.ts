@@ -1,9 +1,10 @@
-import { Entity } from "../../shared/types";
+import { Entity, EntityType } from "../../shared/types";
 import { State } from "../../shared/State";
 import { Point } from "../../shared/objects/Point";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../shared/constants";
 
 export class Asteroid implements Entity {
+  name: EntityType.Asteroid
   x: number;
   y: number;
   xSpeed: number;
@@ -19,6 +20,7 @@ export class Asteroid implements Entity {
     width: number, 
     height: number
   ) {
+    this.name = EntityType.Asteroid;
     this.x = x;
     this.y = y;
     this.xSpeed = xSpeed;
@@ -61,7 +63,11 @@ export class Asteroid implements Entity {
       }
     }
 
-    return new Asteroid(x, y, xSpeed, ySpeed, this.width, this.height);
+    const asteroid = new Asteroid(x, y, xSpeed, ySpeed, this.width, this.height);
+
+    state.quadTree.insert(asteroid);
+
+    return asteroid;
   }
 
   draw (ctx: CanvasRenderingContext2D) {

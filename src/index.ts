@@ -12,6 +12,20 @@ let lastTime = 0;
 
 document.addEventListener('keydown', (e) => {
   keys.add(e.code)
+
+  if (e.code === 'Escape') {
+    if (game.isPaused()) {
+      lastTime = 0;
+
+      game.resume();
+
+      requestAnimationFrame(run);
+
+    } else {
+      game.pause();
+    }
+  }
+
 });
 
 document.addEventListener('keyup', (e) => {
@@ -30,7 +44,9 @@ function run (timestamp: DOMHighResTimeStamp) {
 
   display.draw(game.state);
 
-  requestAnimationFrame(run);
+    if (!game.isPaused()) {
+      requestAnimationFrame(run);
+    }
 }
 
 requestAnimationFrame(run);

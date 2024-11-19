@@ -19,6 +19,20 @@ export class QuadTree {
     this.nodes = [];
   }
 
+  log () {
+    console.log(this.entities.map(e => e.name).join(' - '))
+
+    this.nodes.forEach(node => node.log());
+  }
+
+  draw (ctx: CanvasRenderingContext2D) {
+    ctx.strokeStyle = 'green';
+    
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    
+    this.nodes.forEach(node => node.draw(ctx));
+  }
+
   clear () {
     this.entities = [];
 
@@ -48,8 +62,8 @@ export class QuadTree {
     const horizontalMidpoint = this.y + (this.height / 2);
 
     const isTop = (entity.y < horizontalMidpoint) && (entity.y + entity.height < horizontalMidpoint);
-    const isBottom = (entity.y < horizontalMidpoint) && (entity.y + entity.height < horizontalMidpoint);
-  
+    const isBottom = entity.y > horizontalMidpoint;
+
     if (entity.x < verticalMidpoint && entity.x + entity.width < verticalMidpoint) {
       if (isTop) {
         return 1;
@@ -106,5 +120,18 @@ export class QuadTree {
         }
       }
     }
+  }
+
+  retrieve (entity: Entity): Array<Entity> {
+    const index = this.getIndex(entity);
+    const near = []
+
+    if (index !== -1 && this.nodes.length > 0) {
+      near.push(...this.nodes[index].retrieve(entity));
+    }
+
+    near.push(...this.entities);
+
+    return near;
   }
 }

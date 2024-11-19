@@ -1,9 +1,10 @@
 import { State } from '../../shared/State';
-import { Entity } from '../../shared/types';
+import { Entity, EntityType } from '../../shared/types';
 import { Point } from '../../shared/objects/Point';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../../shared/constants';
 
 export class Ship implements Entity {
+  name: EntityType.Ship;
   x: number;
   y: number;
   status: ShipStatus;
@@ -21,6 +22,7 @@ export class Ship implements Entity {
     x?: number, 
     y?: number
   ) {
+    this.name = EntityType.Ship;
     this.width = width;
     this.height = height;
     this.angle = angle;
@@ -60,7 +62,7 @@ export class Ship implements Entity {
       }
     }
 
-    return new Ship(
+    const ship = new Ship(
       this.width, 
       this.height, 
       angle, 
@@ -69,10 +71,22 @@ export class Ship implements Entity {
       this.x, 
       this.y
     );
+
+    state.setShip(ship);
+    state.quadTree.insert(ship);
+
+    return ship;
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = 'green';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+    if (this.status === ShipStatus.Colliding) {
+      ctx.strokeStyle = 'red';
+    } else {
+      ctx.strokeStyle = 'white';
+    }
 
     ctx.save()
 
@@ -90,10 +104,23 @@ export class Ship implements Entity {
 
     ctx.restore();
   }
+
+  onCollision (entity: EntityType) {
+    if (entity === EntityType.Asteroid) {
+      this.status = ShipStatus.Colliding;
+    }
+  }
+
+  onNoCollision () {
+    if (this.status === ShipStatus.Colliding) {
+      this.status = ShipStatus.Ready; 
+    }
+  }
 }
 
 export enum ShipStatus {
   Ready = "Ready",
   Firing = "Firing",
   Loading = "Loading",
+  Colliding = "Colliding"
 }

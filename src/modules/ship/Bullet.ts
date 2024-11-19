@@ -1,5 +1,5 @@
 import { State } from "../../shared/State";
-import { Entity } from "../../shared/types";
+import { Entity, EntityType } from "../../shared/types";
 import { Point } from "../../shared/objects/Point";
 import { 
   CANVAS_HEIGHT, 
@@ -10,6 +10,7 @@ import {
 import { ShipStatus } from './Ship';
 
 export class Bullet implements Entity {
+  name: EntityType.Bullet;
   x: number;
   y: number;
   xSpeed: number;
@@ -25,6 +26,7 @@ export class Bullet implements Entity {
     xSpeed?: number,
     ySpeed?: number
   ) {
+    this.name = EntityType.Bullet;
     this.x = x;
     this.y = y;
 
@@ -44,7 +46,11 @@ export class Bullet implements Entity {
     x += this.xSpeed * dt;
     y += this.ySpeed * dt;
 
-    return new Bullet(x, y, this.angle, this.xSpeed, this.ySpeed);
+    const bullet = new Bullet(x, y, this.angle, this.xSpeed, this.ySpeed);
+
+    state.quadTree.insert(bullet);
+
+    return bullet;
   }
 
   draw (ctx: CanvasRenderingContext2D) {
