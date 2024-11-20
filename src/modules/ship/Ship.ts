@@ -5,6 +5,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../../shared/constants';
 
 export class Ship implements Entity {
   name: EntityType.Ship;
+  collided: boolean;
   x: number;
   y: number;
   status: ShipStatus;
@@ -20,7 +21,8 @@ export class Ship implements Entity {
     status: ShipStatus = ShipStatus.Ready,
     passed: number = 0,
     x?: number, 
-    y?: number
+    y?: number,
+    collided: boolean = false,
   ) {
     this.name = EntityType.Ship;
     this.width = width;
@@ -60,10 +62,6 @@ export class Ship implements Entity {
         status = ShipStatus.Ready;
         passed = 0;
       }
-    }
-
-    if (status === ShipStatus.Colliding) {
-      status = ShipStatus.Ready;
     }
 
     const ship = new Ship(
@@ -109,14 +107,8 @@ export class Ship implements Entity {
     ctx.restore();
   }
 
-  clear () {
-    if (this.status === ShipStatus.Colliding) {
-      this.status = ShipStatus.Ready;
-    }
-  }
-
   onCollision () {
-    this.status = ShipStatus.Colliding;
+    this.collided = true;
   }
 }
 

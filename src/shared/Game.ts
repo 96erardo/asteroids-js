@@ -18,9 +18,7 @@ export class Game {
 
     const ship = this.state.ship.update(dt, this.state, keys, cursor);
     
-    const asteroids = this.state.asteroids.map(asteroid => asteroid.update(
-      dt, this.state, keys, cursor
-    ));
+    const asteroids = this.state.asteroids.update(dt, this.state, keys, cursor);
 
     const bullets = this.state.bullets.update(dt, this.state, keys, cursor);
 

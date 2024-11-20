@@ -5,7 +5,7 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../shared/constants";
 
 export class Asteroid implements Entity {
   name: EntityType.Asteroid
-  status: AsteroidStatus;
+  collided: boolean;
   x: number;
   y: number;
   xSpeed: number;
@@ -20,10 +20,9 @@ export class Asteroid implements Entity {
     ySpeed: number,
     width: number, 
     height: number,
-    status: AsteroidStatus = AsteroidStatus.Free,
   ) {
     this.name = EntityType.Asteroid;
-    this.status = status;
+    this.collided = false;
     this.x = x;
     this.y = y;
     this.xSpeed = xSpeed;
@@ -33,8 +32,6 @@ export class Asteroid implements Entity {
   }
 
   update (dt: number, state: State, keys: Set<string>, cursor: Point): Asteroid {
-    this.clear();
-    
     let x = this.x;
     let y = this.y;
     let xSpeed = this.xSpeed;
@@ -75,17 +72,77 @@ export class Asteroid implements Entity {
     return asteroid;
   }
 
+  spread (): Array<Asteroid> {
+    if (this.width === 35) {
+      return []
+    } else if (this.width === 75) {
+      const factor1 = Math.random() * 2.5;
+      const factor2 = Math.random() * 2.5;
+      const greater = this.xSpeed > this.ySpeed ? 'x' : 'y';
+      
+      const xSpeed1 = Math.min(Math.max(20, this.xSpeed * factor1), 50);
+      const ySpeed1 = Math.min(Math.max(20, this.xSpeed * factor1), 50);
+
+      const xSpeed2 = Math.min(Math.max(20, this.xSpeed * factor2), 50);
+      const ySpeed2 = Math.min(Math.max(20, this.xSpeed * factor2), 50);
+
+      return [
+        new Asteroid(
+          this.x + (this.width / 2) - (35 / 2),
+          this.y + (this.width / 2) - (35 / 2), 
+          xSpeed1,
+          ySpeed1, 
+          35, 
+          35
+        ),
+        new Asteroid(
+          this.x + (this.width / 2) - (35 / 2),
+          this.y + (this.width / 2) - (35 / 2), 
+          greater === 'x' ? xSpeed2 : -xSpeed2,
+          greater === 'y' ? ySpeed2 : -ySpeed2, 
+          35, 
+          35
+        ),
+      ]
+    } else {
+      const factor1 = Math.random() * 4;
+      const factor2 = Math.random() * 4;
+      const greater = this.xSpeed > this.ySpeed ? 'x' : 'y';
+      
+      const xSpeed1 = Math.min(Math.max(20, this.xSpeed * factor1), 50);
+      const ySpeed1 = Math.min(Math.max(20, this.xSpeed * factor1), 50);
+
+      const xSpeed2 = Math.min(Math.max(20, this.xSpeed * factor2), 50);
+      const ySpeed2 = Math.min(Math.max(20, this.xSpeed * factor2), 50);
+
+      return [
+        new Asteroid(
+          this.x + (this.width / 2) - (75 / 2),
+          this.y + (this.width / 2) - (75 / 2), 
+          xSpeed1,
+          ySpeed1,
+          75,
+          75
+        ),
+        new Asteroid(
+          this.x + (this.width / 2) - (75 / 2),
+          this.y + (this.width / 2) - (75 / 2),
+          greater === 'x' ? xSpeed2 : -xSpeed2,
+          greater === 'y' ? ySpeed2 : -ySpeed2, 
+          75, 
+          75
+        ),
+      ]
+    }
+  }
+
   draw (ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = this.status === AsteroidStatus.Free ? 'white' : 'red';
+    ctx.strokeStyle = this.collided === false ? 'white' : 'red';
     ctx.strokeRect(this.x, this.y, this.width, this.height);
   }
 
-  clear () {
-    this.status = AsteroidStatus.Free;
-  }
-
   onCollision () {
-    this.status = AsteroidStatus.Colliding;
+    this.collided = true;
   }
 }
 
@@ -99,8 +156,8 @@ export function big (x: number, y: number): Asteroid {
   const xDir = Math.round(Math.random()) === 0 ? -1 : 1;
   const yDir = Math.round(Math.random()) === 0 ? -1 : 1;
 
-  const xSpeed = xDir * Math.round(Math.random() * 10 + 20);
-  const ySpeed = yDir * Math.round(Math.random() * 10 + 20);
+  const xSpeed = xDir * Math.round(Math.random() * 30 + 20);
+  const ySpeed = yDir * Math.round(Math.random() * 30 + 20);
 
   return new Asteroid(x, y, xSpeed, ySpeed, 100, 100)
 }

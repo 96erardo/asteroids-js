@@ -11,7 +11,7 @@ import { ShipStatus } from './Ship';
 
 export class Bullet implements Entity {
   name: EntityType.Bullet;
-  status: BulletStatus;
+  collided: boolean;
   x: number;
   y: number;
   xSpeed: number;
@@ -25,11 +25,10 @@ export class Bullet implements Entity {
     y: number,
     angle: number,
     xSpeed?: number,
-    ySpeed?: number,
-    status: BulletStatus = BulletStatus.Free,
+    ySpeed?: number
   ) {
     this.name = EntityType.Bullet;
-    this.status = status;
+    this.collided = false;
     this.x = x;
     this.y = y;
 
@@ -43,8 +42,6 @@ export class Bullet implements Entity {
   }
 
   update (dt: number, state: State, keys: Set<string>, cursor: Point): Bullet {
-    this.clear();
-    
     let x = this.x;
     let y = this.y;
 
@@ -59,8 +56,8 @@ export class Bullet implements Entity {
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = this.status === BulletStatus.Free ? 'white' : 'red';
-    ctx.strokeStyle = this.status === BulletStatus.Free ? 'white' : 'red';
+    ctx.fillStyle = this.collided === false ? 'white' : 'red';
+    ctx.strokeStyle = this.collided === false ? 'white' : 'red';
 
     ctx.beginPath();
     ctx.ellipse(this.x, this.y, BULLET_RADIUS, BULLET_RADIUS, 0, 0, 2 * Math.PI);
@@ -77,12 +74,8 @@ export class Bullet implements Entity {
     )
   }
 
-  clear () {
-    this.status = BulletStatus.Free;
-  }
-
   onCollision () {
-    this.status = BulletStatus.Colliding;
+    this.collided = true;
   }
 }
 
@@ -95,6 +88,7 @@ export class Bullets {
   
   update (dt: number, state: State, keys: Set<string>, cursor: Point): Bullets {
     const list = this.list
+      .filter(b => b.collided === false)
       .map(b => b.update(dt, state, keys, cursor))
       .filter(b => b.isIn());
 

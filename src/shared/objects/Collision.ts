@@ -2,7 +2,7 @@ import { State } from '../State';
 import { QuadTree } from './QuadTree';
 import { Ship } from '../../modules/ship/Ship';
 import { Bullets } from '../../modules/ship/Bullet';
-import { Asteroid } from '../../modules/asteroid/Asteroid';
+import { Manager as AsteroidsManager } from '../../modules/asteroid/Manager';
 import { Entity, EntityType } from '../types';
 
 export class Collision {
@@ -10,7 +10,7 @@ export class Collision {
 
   detect (
     ship: Ship,
-    asteroids: Array<Asteroid>,
+    asteroids: AsteroidsManager,
     bullets: Bullets,
     quadTree: QuadTree,
   ): State {

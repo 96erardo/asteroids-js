@@ -3,6 +3,7 @@ import { Point } from './objects/Point';
 
 export interface Entity {
   name: EntityType;
+  collided: boolean;
   x: number;
   y: number;
   width: number;
@@ -11,8 +12,6 @@ export interface Entity {
   update (dt: number, state: State, keys: Set<string>, cursor: Point): Entity;
 
   draw (ctx: CanvasRenderingContext2D): void;
-
-  clear (): void;
 
   onCollision (): void;
 }
