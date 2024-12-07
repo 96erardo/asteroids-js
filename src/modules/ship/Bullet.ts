@@ -1,6 +1,6 @@
 import { State } from "../../shared/State";
 import { Entity, EntityType } from "../../shared/types";
-import { Point } from "../../shared/objects/Point";
+import { Cursor } from "../../shared/objects/Cursor";
 import { 
   CANVAS_HEIGHT, 
   CANVAS_WIDTH,
@@ -41,7 +41,7 @@ export class Bullet implements Entity {
     this.height = BULLET_RADIUS * 2;
   }
 
-  update (dt: number, state: State, keys: Set<string>, cursor: Point): Bullet {
+  update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Bullet {
     let x = this.x;
     let y = this.y;
 
@@ -86,7 +86,7 @@ export class Bullets {
     this.list = list;
   }
   
-  update (dt: number, state: State, keys: Set<string>, cursor: Point): Bullets {
+  update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Bullets {
     const list = this.list
       .filter(b => b.collided === false)
       .map(b => b.update(dt, state, keys, cursor))
@@ -94,8 +94,8 @@ export class Bullets {
 
     if (state.ship.status === ShipStatus.Firing) {
       list.push(new Bullet(
-          (CANVAS_WIDTH / 2) - BULLET_RADIUS,
-          (CANVAS_HEIGHT / 2) - BULLET_RADIUS,
+          state.ship.x + (state.ship.width / 2) - BULLET_RADIUS,
+          state.ship.y + (state.ship.height / 2) - BULLET_RADIUS,
           state.ship.angle
         )
       )

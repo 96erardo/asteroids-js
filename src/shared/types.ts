@@ -1,5 +1,5 @@
 import { State } from './State';
-import { Point } from './objects/Point';
+import { Cursor } from './objects/Cursor';
 
 export interface Entity {
   name: EntityType;
@@ -9,7 +9,7 @@ export interface Entity {
   width: number;
   height: number;
 
-  update (dt: number, state: State, keys: Set<string>, cursor: Point): Entity;
+  update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Entity;
 
   draw (ctx: CanvasRenderingContext2D): void;
 

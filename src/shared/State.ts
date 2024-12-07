@@ -29,7 +29,7 @@ export class State {
 
   static initialState (): State {
     return new State(
-      new Ship(20, 20, 0),
+      new Ship(null, null, 0, 0, 20, 20, 0),
       new AsteroidsManager([
         asteroids.big(5, 5),
         asteroids.big(5, CANVAS_HEIGHT - 105),

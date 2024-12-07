@@ -1,6 +1,6 @@
 import { Asteroid } from './Asteroid';
 import { State } from '../../shared/State';
-import { Point } from '../../shared/objects/Point';
+import { Cursor } from '../../shared/objects/Cursor';
 
 export class Manager {
   asteroids: Array<Asteroid>;
@@ -9,7 +9,7 @@ export class Manager {
     this.asteroids = asteroids;
   }
 
-  update (dt: number, state: State, keys: Set<string>, cursor: Point): Manager {
+  update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Manager {
     const asteroids = this.asteroids.reduce((acum, asteroid) => {
       if (asteroid.collided) {
         const remainings = asteroid.spread().map(a => a.update(dt, state, keys, cursor))

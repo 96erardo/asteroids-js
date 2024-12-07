@@ -1,10 +1,10 @@
 import { Game } from './shared/Game'; 
 import { Display } from './shared/Display'; 
-import { Point } from './shared/objects/Point'; 
+import { Cursor } from './shared/objects/Cursor'; 
 import './index.css';
 
 const keys = new Set<string>();
-let cursor = new Point(0, 0);
+const cursor = new Cursor();
 const game = new Game()
 const display = new Display();
 
@@ -33,7 +33,15 @@ document.addEventListener('keyup', (e) => {
 });
 
 display.canvas.addEventListener('mousemove', (e) => {
-  cursor.set(e.offsetX, e.offsetY);
+  cursor.point.set(e.offsetX, e.offsetY);
+})
+
+display.canvas.addEventListener('mousedown', () => {
+  cursor.onPress();
+})
+
+display.canvas.addEventListener('mouseup', () => {
+  cursor.onRelease();
 })
 
 function run (timestamp: DOMHighResTimeStamp) {

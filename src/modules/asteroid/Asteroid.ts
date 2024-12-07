@@ -1,6 +1,6 @@
 import { Entity, EntityType } from "../../shared/types";
 import { State } from "../../shared/State";
-import { Point } from "../../shared/objects/Point";
+import { Cursor } from "../../shared/objects/Cursor";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../shared/constants";
 
 export class Asteroid implements Entity {
@@ -31,7 +31,7 @@ export class Asteroid implements Entity {
     this.height = height;
   }
 
-  update (dt: number, state: State, keys: Set<string>, cursor: Point): Asteroid {
+  update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Asteroid {
     let x = this.x;
     let y = this.y;
     let xSpeed = this.xSpeed;

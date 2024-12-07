@@ -1,5 +1,5 @@
 import { State } from './State';
-import { Point } from './objects/Point';
+import { Cursor } from './objects/Cursor';
 import { Collision } from './objects/Collision';
 
 export class Game {
@@ -13,7 +13,7 @@ export class Game {
     this.status = GameStatus.Running;
   }
 
-  update (dt: number, keys: Set<string>, cursor: Point) {
+  update (dt: number, keys: Set<string>, cursor: Cursor) {
     this.state.quadTree.clear();
 
     const ship = this.state.ship.update(dt, this.state, keys, cursor);

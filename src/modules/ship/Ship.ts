@@ -1,13 +1,21 @@
 import { State } from '../../shared/State';
 import { Entity, EntityType } from '../../shared/types';
-import { Point } from '../../shared/objects/Point';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../../shared/constants';
+import { Cursor } from '../../shared/objects/Cursor';
+import { 
+  CANVAS_WIDTH, 
+  CANVAS_HEIGHT,
+  SHIP_ACC,
+  SHIP_DECC,
+  SHIP_MAX_VEL,
+} from '../../shared/constants';
 
 export class Ship implements Entity {
   name: EntityType.Ship;
   collided: boolean;
   x: number;
   y: number;
+  xSpeed: number;
+  ySpeed: number;
   status: ShipStatus;
   passed: number;
   angle: number;
@@ -15,41 +23,43 @@ export class Ship implements Entity {
   height: number
 
   constructor (
+    x: number | null, 
+    y: number | null,
+    xSpeed: number,
+    ySpeed: number,
     width: number, 
     height: number, 
     angle: number,
     status: ShipStatus = ShipStatus.Ready,
     passed: number = 0,
-    x?: number, 
-    y?: number,
     collided: boolean = false,
   ) {
     this.name = EntityType.Ship;
+    this.x = x || (CANVAS_WIDTH / 2 - (width / 2));
+    this.y = y || (CANVAS_HEIGHT / 2 - (height / 2));
+    this.xSpeed = xSpeed;
+    this.ySpeed = ySpeed;
     this.width = width;
     this.height = height;
     this.angle = angle;
     this.status = status;
     this.passed = passed;
-    
-    if (x !== undefined && y !== undefined) {
-      this.x = x;
-      this.y = y;
-    } else {
-      this.x = CANVAS_WIDTH / 2 - (width / 2)
-      this.y = CANVAS_HEIGHT / 2 - (height / 2)
-    }
   }
 
-  update (dt: number, state: State, keys: Set<string>, cursor: Point): Ship {
-    const dx = cursor.x - (CANVAS_WIDTH / 2)
-    const dy = - (cursor.y - (CANVAS_HEIGHT / 2))
+  update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Ship {
+    let x = this.x;
+    let y = this.y;
+    let xSpeed = this.xSpeed;
+    let ySpeed = this.ySpeed;
+    const dx = cursor.point.x - (x + (this.width / 2))
+    const dy = - (cursor.point.y - (y + (this.height / 2)))
     let status = this.status;
     let passed = this.passed;
 
     const angle = Math.atan2(dy, dx);
 
     if (this.status === ShipStatus.Ready) {
-      if (keys.has('Space')) {
+      if (cursor.isClicked()) {
         status = ShipStatus.Firing;
       }
     } else if (this.status === ShipStatus.Firing) {
@@ -58,20 +68,49 @@ export class Ship implements Entity {
     } else if (this.status === ShipStatus.Loading) {
       passed += dt;
 
-      if (passed > 0.5) {
+      if (passed > 0.30) {
         status = ShipStatus.Ready;
         passed = 0;
       }
     }
 
+    if (keys.has('Space')) {
+      const xAcc = SHIP_ACC * Math.cos(angle);
+      const yAcc = SHIP_ACC * Math.sin(-angle);
+
+      xSpeed = xAcc > 0 ? Math.min(100, xSpeed + (xAcc * dt)) : Math.max(-100, xSpeed + (xAcc * dt));
+      ySpeed = yAcc > 0 ? Math.min(100, ySpeed + (yAcc * dt)) : Math.max(-100, ySpeed + (yAcc * dt));
+    
+    } else {
+      if (xSpeed !== 0) {
+        xSpeed = xSpeed > 0 ? Math.max(0, xSpeed - (SHIP_DECC * dt)) : Math.min(0, xSpeed + (SHIP_DECC * dt));
+      }
+
+      if (ySpeed != 0) {
+        ySpeed = ySpeed > 0 ? Math.max(0, ySpeed - (SHIP_DECC * dt)) : Math.min(0, ySpeed + (SHIP_DECC * dt));
+      }
+    }
+
+    if (
+      xSpeed !== this.xSpeed ||
+      ySpeed !== this.ySpeed
+    ) {
+      console.log(xSpeed, ySpeed);
+    }
+
+    x += xSpeed * dt;
+    y += ySpeed * dt;
+
     const ship = new Ship(
+      x,
+      y,
+      xSpeed,
+      ySpeed,
       this.width, 
       this.height, 
       angle, 
       status, 
-      passed, 
-      this.x, 
-      this.y
+      passed
     );
 
     state.setShip(ship);
@@ -92,7 +131,7 @@ export class Ship implements Entity {
 
     ctx.save()
 
-    ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+    ctx.translate(this.x + (this.width / 2), this.y + (this.height / 2));
     ctx.rotate(-this.angle);
 
     ctx.beginPath();
