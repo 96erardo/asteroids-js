@@ -91,13 +91,6 @@ export class Ship implements Entity {
       }
     }
 
-    if (
-      xSpeed !== this.xSpeed ||
-      ySpeed !== this.ySpeed
-    ) {
-      console.log(xSpeed, ySpeed);
-    }
-
     x += xSpeed * dt;
     y += ySpeed * dt;
 
