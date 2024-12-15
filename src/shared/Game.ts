@@ -17,9 +17,7 @@ export class Game {
     this.state.quadTree.clear();
 
     const ship = this.state.ship.update(dt, this.state, keys, cursor);
-    
     const asteroids = this.state.asteroids.update(dt, this.state, keys, cursor);
-
     const bullets = this.state.bullets.update(dt, this.state, keys, cursor);
 
     this.state = this.collision.detect(ship, asteroids, bullets, this.state.quadTree);

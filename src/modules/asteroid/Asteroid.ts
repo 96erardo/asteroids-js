@@ -1,10 +1,12 @@
 import { Entity, EntityType } from "../../shared/types";
+import { AsteroidShape, genenerateShape, drawShape } from './graphics';
 import { State } from "../../shared/State";
 import { Cursor } from "../../shared/objects/Cursor";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../shared/constants";
 
 export class Asteroid implements Entity {
   name: EntityType.Asteroid
+  shape: AsteroidShape;
   collided: boolean;
   x: number;
   y: number;
@@ -16,12 +18,14 @@ export class Asteroid implements Entity {
   constructor (
     x: number, 
     y: number,
+    shape: AsteroidShape,
     xSpeed: number,
     ySpeed: number,
     width: number, 
     height: number,
   ) {
     this.name = EntityType.Asteroid;
+    this.shape = shape;
     this.collided = false;
     this.x = x;
     this.y = y;
@@ -65,7 +69,7 @@ export class Asteroid implements Entity {
       }
     }
 
-    const asteroid = new Asteroid(x, y, xSpeed, ySpeed, this.width, this.height);
+    const asteroid = new Asteroid(x, y, this.shape, xSpeed, ySpeed, this.width, this.height);
 
     state.quadTree.insert(asteroid);
 
@@ -89,7 +93,8 @@ export class Asteroid implements Entity {
       return [
         new Asteroid(
           this.x + (this.width / 2) - (35 / 2),
-          this.y + (this.width / 2) - (35 / 2), 
+          this.y + (this.width / 2) - (35 / 2),
+          genenerateShape(),
           xSpeed1,
           ySpeed1, 
           35, 
@@ -98,6 +103,7 @@ export class Asteroid implements Entity {
         new Asteroid(
           this.x + (this.width / 2) - (35 / 2),
           this.y + (this.width / 2) - (35 / 2), 
+          genenerateShape(),
           greater === 'x' ? xSpeed2 : -xSpeed2,
           greater === 'y' ? ySpeed2 : -ySpeed2, 
           35, 
@@ -118,7 +124,8 @@ export class Asteroid implements Entity {
       return [
         new Asteroid(
           this.x + (this.width / 2) - (75 / 2),
-          this.y + (this.width / 2) - (75 / 2), 
+          this.y + (this.width / 2) - (75 / 2),
+          genenerateShape(),
           xSpeed1,
           ySpeed1,
           75,
@@ -127,6 +134,7 @@ export class Asteroid implements Entity {
         new Asteroid(
           this.x + (this.width / 2) - (75 / 2),
           this.y + (this.width / 2) - (75 / 2),
+          genenerateShape(),
           greater === 'x' ? xSpeed2 : -xSpeed2,
           greater === 'y' ? ySpeed2 : -ySpeed2, 
           75, 
@@ -137,8 +145,9 @@ export class Asteroid implements Entity {
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = this.collided === false ? 'white' : 'red';
+    ctx.strokeStyle = 'green';
     ctx.strokeRect(this.x, this.y, this.width, this.height);
+    drawShape(ctx, this);
   }
 
   onCollision () {
@@ -159,19 +168,19 @@ export function big (x: number, y: number): Asteroid {
   const xSpeed = xDir * Math.round(Math.random() * 30 + 20);
   const ySpeed = yDir * Math.round(Math.random() * 30 + 20);
 
-  return new Asteroid(x, y, xSpeed, ySpeed, 100, 100)
+  return new Asteroid(x, y, genenerateShape(), xSpeed, ySpeed, 100, 100)
 }
 
 export function medium (x: number, y: number): Asteroid {
   const xSpeed = 150;
   const ySpeed = 150;
 
-  return new Asteroid(x, y, xSpeed, ySpeed, 75, 75)
+  return new Asteroid(x, y, genenerateShape(), xSpeed, ySpeed, 75, 75)
 }
 
 export function small (x: number, y: number): Asteroid {
   const xSpeed = 200;
   const ySpeed = 200;
 
-  return new Asteroid(x, y, xSpeed, ySpeed, 35, 35)
+  return new Asteroid(x, y, genenerateShape(), xSpeed, ySpeed, 35, 35)
 }

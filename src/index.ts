@@ -52,9 +52,9 @@ function run (timestamp: DOMHighResTimeStamp) {
 
   display.draw(game.state);
 
-    if (!game.isPaused()) {
-      requestAnimationFrame(run);
-    }
+  if (!game.isPaused()) {
+    requestAnimationFrame(run);
+  }
 }
 
 requestAnimationFrame(run);
