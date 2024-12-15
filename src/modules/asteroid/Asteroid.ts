@@ -1,4 +1,4 @@
-import { Entity, EntityType } from "../../shared/types";
+import { Entity, EntityType } from "../../shared/objects/Entity";
 import { AsteroidShape, genenerateShape, drawShape } from './graphics';
 import { State } from "../../shared/State";
 import { Cursor } from "../../shared/objects/Cursor";

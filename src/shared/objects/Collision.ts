@@ -1,9 +1,10 @@
 import { State } from '../State';
+import { Score } from './Score';
 import { QuadTree } from './QuadTree';
 import { Ship } from '../../modules/ship/Ship';
 import { Bullets } from '../../modules/ship/Bullet';
 import { Manager as AsteroidsManager } from '../../modules/asteroid/Manager';
-import { Entity, EntityType } from '../types';
+import { Entity, EntityType } from './Entity';
 
 export class Collision {
   constructor () {};
@@ -12,6 +13,7 @@ export class Collision {
     ship: Ship,
     asteroids: AsteroidsManager,
     bullets: Bullets,
+    score: Score,
     quadTree: QuadTree,
   ): State {
     const withShip = quadTree.retrieve(ship);
@@ -33,12 +35,14 @@ export class Collision {
           if (areRectsColliding(bullet, entity)) {
             bullet.onCollision();
             entity.onCollision();
+
+            score.point(entity);
           }
         }
       })
     })
 
-    return new State(ship, asteroids, bullets, quadTree);
+    return new State(ship, asteroids, score, bullets, quadTree);
   }
 }
 

@@ -1,5 +1,5 @@
 import { State } from '../../shared/State';
-import { Entity, EntityType } from '../../shared/types';
+import { Entity, EntityType } from '../../shared/objects/Entity';
 import { Cursor } from '../../shared/objects/Cursor';
 import { 
   CANVAS_WIDTH, 
@@ -106,7 +106,6 @@ export class Ship implements Entity {
       passed
     );
 
-    state.setShip(ship);
     state.quadTree.insert(ship);
 
     return ship;

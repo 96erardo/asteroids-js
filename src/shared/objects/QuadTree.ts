@@ -1,5 +1,5 @@
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../constants";
-import { Entity } from "../types";
+import { Entity } from "./Entity";
 
 export class QuadTree {
   x: number; 

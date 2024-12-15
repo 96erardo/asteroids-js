@@ -1,5 +1,5 @@
-import { State } from './State';
-import { Cursor } from './objects/Cursor';
+import { State } from '../State';
+import { Cursor } from './Cursor';
 
 export interface Entity {
   name: EntityType;
@@ -20,4 +20,5 @@ export enum EntityType {
   Ship = "ship",
   Bullet = "bullet",
   Asteroid = "asteroid",
+  Other = "other"
 }

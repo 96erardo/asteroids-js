@@ -13,6 +13,8 @@ export class Display {
     this.ctx = this.canvas.getContext('2d');
 
     document.body.appendChild(this.canvas);
+
+    document.body.appendChild(document.createElement('p'))
   }
 
   draw (state: State) {
@@ -25,6 +27,7 @@ export class Display {
     state.asteroids.draw(this.ctx);
     state.bullets.draw(this.ctx);
     state.ship.draw(this.ctx);
+    state.score.draw(this.ctx);
 
     // state.quadTree.log();
   }
