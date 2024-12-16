@@ -7,7 +7,6 @@ import {
   BULLET_SPEED,
   BULLET_RADIUS, 
 } from "../../shared/constants";
-import { ShipStatus } from './Ship';
 
 export class Bullet implements Entity {
   name: EntityType.Bullet;
@@ -92,7 +91,7 @@ export class Bullets {
       .map(b => b.update(dt, state, keys, cursor))
       .filter(b => b.isIn());
 
-    if (state.ship.status === ShipStatus.Firing) {
+    if (state.ship.firing) {
       list.push(new Bullet(
           state.ship.x + (state.ship.width / 2) - BULLET_RADIUS,
           state.ship.y + (state.ship.height / 2) - BULLET_RADIUS,

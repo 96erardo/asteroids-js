@@ -1,4 +1,5 @@
 import { State } from './State';
+import { SpawnSpace } from '../modules/ship/SpawnSpace';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
 
 export class Display {
@@ -28,6 +29,12 @@ export class Display {
     state.bullets.draw(this.ctx);
     state.ship.draw(this.ctx);
     state.score.draw(this.ctx);
+
+    if (state.ship.status === 'Dead') {
+      const space = new SpawnSpace();
+      
+      space.draw(this.ctx)
+    }
 
     // state.quadTree.log();
   }

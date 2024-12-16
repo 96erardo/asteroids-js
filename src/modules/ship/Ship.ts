@@ -1,49 +1,56 @@
 import { State } from '../../shared/State';
 import { Entity, EntityType } from '../../shared/objects/Entity';
 import { Cursor } from '../../shared/objects/Cursor';
+import { drawShip } from './graphics';
+import { Timer } from '../../shared/objects/Timer';
 import { 
   CANVAS_WIDTH, 
   CANVAS_HEIGHT,
   SHIP_ACC,
   SHIP_DECC,
-  SHIP_MAX_VEL,
 } from '../../shared/constants';
 
 export class Ship implements Entity {
   name: EntityType.Ship;
-  collided: boolean;
+  lives: number;
   x: number;
   y: number;
+  width: number;
+  height: number;
   xSpeed: number;
   ySpeed: number;
-  status: ShipStatus;
-  passed: number;
   angle: number;
-  width: number;
-  height: number
+  status: ShipStatus;
+  firing: boolean;
+  recharge: Timer;
+  respawn: Timer;
+  collided: boolean;
 
   constructor (
+    lives: number,
     x: number | null, 
     y: number | null,
     xSpeed: number,
     ySpeed: number,
-    width: number, 
-    height: number, 
-    angle: number,
-    status: ShipStatus = ShipStatus.Ready,
-    passed: number = 0,
-    collided: boolean = false,
+    angle: number = 0,
+    status: ShipStatus = ShipStatus.Alive,
+    recharge: Timer = new Timer(0.3),
+    respawn: Timer = new Timer(1),
+    firing: boolean = false,
   ) {
     this.name = EntityType.Ship;
-    this.x = x || (CANVAS_WIDTH / 2 - (width / 2));
-    this.y = y || (CANVAS_HEIGHT / 2 - (height / 2));
+    this.lives = lives;
+    this.x = x || (CANVAS_WIDTH / 2 - (20 / 2));
+    this.y = y || (CANVAS_HEIGHT / 2 - (20 / 2));
+    this.width = 20;
+    this.height = 20;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
-    this.width = width;
-    this.height = height;
     this.angle = angle;
     this.status = status;
-    this.passed = passed;
+    this.recharge = recharge;
+    this.respawn = respawn;
+    this.firing = firing;
   }
 
   update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Ship {
@@ -51,30 +58,38 @@ export class Ship implements Entity {
     let y = this.y;
     let xSpeed = this.xSpeed;
     let ySpeed = this.ySpeed;
+    let firing = this.firing;
+    let status = this.status;
+    let recharge = this.recharge;
+    let respawn = this.respawn;
+    
     const dx = cursor.point.x - (x + (this.width / 2))
     const dy = - (cursor.point.y - (y + (this.height / 2)))
-    let status = this.status;
-    let passed = this.passed;
-
     const angle = Math.atan2(dy, dx);
 
-    if (this.status === ShipStatus.Ready) {
+    if (recharge.isCompleted() && status === ShipStatus.Alive) {
       if (cursor.isClicked()) {
-        status = ShipStatus.Firing;
+        firing = true;
+        recharge.start();
       }
-    } else if (this.status === ShipStatus.Firing) {
-      status = ShipStatus.Loading;
-    
-    } else if (this.status === ShipStatus.Loading) {
-      passed += dt;
-
-      if (passed > 0.30) {
-        status = ShipStatus.Ready;
-        passed = 0;
-      }
+    } else {
+      recharge = recharge.update(dt);
     }
 
-    if (keys.has('Space')) {
+    if (respawn.isRunning()) {
+      status = ShipStatus.Dead;
+      respawn = respawn.update(dt);
+    }
+    
+    if (this.firing) {
+      firing = false;
+    }
+
+    if (status === ShipStatus.Dead) {
+      xSpeed = 0;
+      ySpeed = 0;
+
+    } else if (keys.has('Space')) {
       const xAcc = SHIP_ACC * Math.cos(angle);
       const yAcc = SHIP_ACC * Math.sin(-angle);
 
@@ -95,15 +110,16 @@ export class Ship implements Entity {
     y += ySpeed * dt;
 
     const ship = new Ship(
+      this.lives,
       x,
       y,
       xSpeed,
       ySpeed,
-      this.width, 
-      this.height, 
-      angle, 
-      status, 
-      passed
+      angle,
+      status,
+      recharge, 
+      respawn,
+      firing,
     );
 
     state.quadTree.insert(ship);
@@ -111,16 +127,32 @@ export class Ship implements Entity {
     return ship;
   }
 
-  draw (ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = 'green';
-    ctx.strokeRect(this.x, this.y, this.width, this.height);
+  reset () {
+    this.x = CANVAS_WIDTH / 2 - (20 / 2);
+    this.y = CANVAS_HEIGHT / 2 - (20 / 2);
+    this.xSpeed = 0;
+    this.ySpeed = 0;
+    this.status = ShipStatus.Alive;
+  }
 
-    if (this.status === ShipStatus.Colliding) {
-      ctx.strokeStyle = 'red';
-    } else {
-      ctx.strokeStyle = 'white';
+  draw (ctx: CanvasRenderingContext2D) {
+    let x = 20;
+    let y = 60;
+
+    for (let i = 0; i < this.lives; i++) {
+      drawShip(x, y, this, ctx);
+      
+      x += this.width;
     }
 
+    if (this.status === ShipStatus.Dead) {
+      return;
+    }
+
+    ctx.strokeStyle = 'green';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    
+    ctx.strokeStyle = 'white';
     ctx.save()
 
     ctx.translate(this.x + (this.width / 2), this.y + (this.height / 2));
@@ -139,13 +171,12 @@ export class Ship implements Entity {
   }
 
   onCollision () {
-    this.collided = true;
+    this.lives = Math.max(this.lives - 1, 0);
+    this.respawn.start();
   }
 }
 
 export enum ShipStatus {
-  Ready = "Ready",
-  Firing = "Firing",
-  Loading = "Loading",
-  Colliding = "Colliding"
+  Alive = "Alive",
+  Dead = "Dead"
 }

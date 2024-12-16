@@ -3,11 +3,11 @@ import { Cursor } from './Cursor';
 
 export interface Entity {
   name: EntityType;
-  collided: boolean;
   x: number;
   y: number;
   width: number;
   height: number;
+  collided: boolean;
 
   update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Entity;
 
