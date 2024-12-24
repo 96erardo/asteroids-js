@@ -1,40 +1,55 @@
 import { Asteroid } from './Asteroid';
 
-export type AsteroidShape = 1 | 2 | 3;
+export enum AsteroidShape {
+  One,
+  Two,
+  Three
+}
+
+export enum AsteroidSize {
+  Small = 15,
+  Medium = 35,
+  Large = 75,
+}
 
 export function genenerateShape (): AsteroidShape {
-  return Math.round((Math.random() * 2) + 1) as AsteroidShape;
+  return Math.round(Math.random() * 2) as AsteroidShape;
 }
 
 export function drawShape (
   ctx: CanvasRenderingContext2D,
-  asteroid: Asteroid,
+  asteroid: Asteroid,           
 ) {
+  const bigger = asteroid.size === AsteroidSize.Small ? 0 : 5;
+
+
   switch (asteroid.shape) {
-    case 1:
+    case AsteroidShape.One:
       return shape1(
         ctx, 
-        asteroid.x - 5, 
-        asteroid.y - 5, 
-        asteroid.width + 10, 
-        asteroid.height + 10
+        asteroid.x - (bigger), 
+        asteroid.y - (bigger), 
+        asteroid.width + (bigger * 2), 
+        asteroid.height + (bigger * 2)
       )
-    case 2:
+    case AsteroidShape.Two: 
       return shape2(
         ctx, 
-        asteroid.x - 5, 
-        asteroid.y - 5, 
-        asteroid.width + 10, 
-        asteroid.height + 10
+        asteroid.x - (bigger), 
+        asteroid.y - (bigger), 
+        asteroid.width + (bigger * 2), 
+        asteroid.height + (bigger * 2)
       )
-    case 3:
+    case AsteroidShape.Three:
       return shape3(
         ctx, 
-        asteroid.x - 5, 
-        asteroid.y - 5, 
-        asteroid.width + 10, 
-        asteroid.height + 10
+        asteroid.x - (bigger), 
+        asteroid.y - (bigger), 
+        asteroid.width + (bigger * 2), 
+        asteroid.height + (bigger * 2)
       )
+    default:
+      console.log('default')
   }
 }
 

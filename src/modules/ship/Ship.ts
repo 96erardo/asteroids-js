@@ -149,8 +149,8 @@ export class Ship implements Entity {
       return;
     }
 
-    // ctx.strokeStyle = 'green';
-    // ctx.strokeRect(this.x, this.y, this.width, this.height);
+    ctx.strokeStyle = 'green';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
     
     ctx.strokeStyle = 'white';
     ctx.save()

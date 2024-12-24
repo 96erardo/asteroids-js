@@ -1,5 +1,5 @@
 import { Entity, EntityType } from "../../shared/objects/Entity";
-import { AsteroidShape, genenerateShape, drawShape } from './graphics';
+import { AsteroidShape, AsteroidSize, genenerateShape, drawShape } from './graphics';
 import { State } from "../../shared/State";
 import { Cursor } from "../../shared/objects/Cursor";
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../shared/constants";
@@ -7,6 +7,7 @@ import { CANVAS_HEIGHT, CANVAS_WIDTH } from "../../shared/constants";
 export class Asteroid implements Entity {
   name: EntityType.Asteroid
   shape: AsteroidShape;
+  size: AsteroidSize;
   collided: boolean;
   x: number;
   y: number;
@@ -19,20 +20,20 @@ export class Asteroid implements Entity {
     x: number, 
     y: number,
     shape: AsteroidShape,
+    size: AsteroidSize,
     xSpeed: number,
     ySpeed: number,
-    width: number, 
-    height: number,
   ) {
     this.name = EntityType.Asteroid;
     this.shape = shape;
+    this.size = size;
     this.collided = false;
     this.x = x;
     this.y = y;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
-    this.width = width;
-    this.height = height;
+    this.width = size;
+    this.height = size;
   }
 
   update (dt: number, state: State, keys: Set<string>, cursor: Cursor): Asteroid {
@@ -69,7 +70,7 @@ export class Asteroid implements Entity {
       }
     }
 
-    const asteroid = new Asteroid(x, y, this.shape, xSpeed, ySpeed, this.width, this.height);
+    const asteroid = new Asteroid(x, y, this.shape, this.size, xSpeed, ySpeed);
 
     state.quadTree.insert(asteroid);
 
@@ -77,76 +78,72 @@ export class Asteroid implements Entity {
   }
 
   spread (): Array<Asteroid> {
-    if (this.width === 35) {
+    if (this.size === AsteroidSize.Small) {
       return []
-    } else if (this.width === 75) {
-      const factor1 = Math.random() * 2.5;
-      const factor2 = Math.random() * 2.5;
+    } else if (this.size === AsteroidSize.Medium) {
+      const rand1 = Math.random();
+      const rand2 = Math.random();
       const greater = this.xSpeed > this.ySpeed ? 'x' : 'y';
       
-      const xSpeed1 = Math.min(Math.max(20, this.xSpeed * factor1), 50);
-      const ySpeed1 = Math.min(Math.max(20, this.xSpeed * factor1), 50);
+      const xSpeed1 = Math.round((rand1 * 30) + 50);
+      const ySpeed1 = Math.round((rand1 * 30) + 50);
 
-      const xSpeed2 = Math.min(Math.max(20, this.xSpeed * factor2), 50);
-      const ySpeed2 = Math.min(Math.max(20, this.xSpeed * factor2), 50);
+      const xSpeed2 = Math.round((rand2 * 30) + 50)
+      const ySpeed2 = Math.round((rand2 * 30) + 50)
 
       return [
         new Asteroid(
-          this.x + (this.width / 2) - (35 / 2),
-          this.y + (this.width / 2) - (35 / 2),
+          this.x + (this.width / 2) - (AsteroidSize.Small / 2),
+          this.y + (this.width / 2) - (AsteroidSize.Small / 2),
           genenerateShape(),
+          AsteroidSize.Small,
           xSpeed1,
           ySpeed1, 
-          35, 
-          35
         ),
         new Asteroid(
-          this.x + (this.width / 2) - (35 / 2),
-          this.y + (this.width / 2) - (35 / 2), 
+          this.x + (this.width / 2) - (AsteroidSize.Small / 2),
+          this.y + (this.width / 2) - (AsteroidSize.Small / 2), 
           genenerateShape(),
+          AsteroidSize.Small,
           greater === 'x' ? xSpeed2 : -xSpeed2,
           greater === 'y' ? ySpeed2 : -ySpeed2, 
-          35, 
-          35
         ),
       ]
     } else {
-      const factor1 = Math.random() * 4;
-      const factor2 = Math.random() * 4;
+      const rand1 = Math.random();
+      const rand2 = Math.random();
       const greater = this.xSpeed > this.ySpeed ? 'x' : 'y';
       
-      const xSpeed1 = Math.min(Math.max(20, this.xSpeed * factor1), 50);
-      const ySpeed1 = Math.min(Math.max(20, this.xSpeed * factor1), 50);
+      const xSpeed1 = Math.round((rand1 * 30) + 30);
+      const ySpeed1 = Math.round((rand1 * 30) + 30);
 
-      const xSpeed2 = Math.min(Math.max(20, this.xSpeed * factor2), 50);
-      const ySpeed2 = Math.min(Math.max(20, this.xSpeed * factor2), 50);
+      const xSpeed2 = Math.round((rand2 * 30) + 30);
+      const ySpeed2 = Math.round((rand2 * 30) + 30);
 
       return [
         new Asteroid(
-          this.x + (this.width / 2) - (75 / 2),
-          this.y + (this.width / 2) - (75 / 2),
+          this.x + (this.width / 2) - (AsteroidSize.Medium / 2),
+          this.y + (this.width / 2) - (AsteroidSize.Medium / 2),
           genenerateShape(),
+          AsteroidSize.Medium,
           xSpeed1,
           ySpeed1,
-          75,
-          75
         ),
         new Asteroid(
-          this.x + (this.width / 2) - (75 / 2),
-          this.y + (this.width / 2) - (75 / 2),
+          this.x + (this.width / 2) - (AsteroidSize.Medium / 2),
+          this.y + (this.width / 2) - (AsteroidSize.Medium / 2),
           genenerateShape(),
+          AsteroidSize.Medium,
           greater === 'x' ? xSpeed2 : -xSpeed2,
           greater === 'y' ? ySpeed2 : -ySpeed2, 
-          75, 
-          75
         ),
       ]
     }
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    // ctx.strokeStyle = 'green';
-    // ctx.strokeRect(this.x, this.y, this.width, this.height);
+    ctx.strokeStyle = 'green';
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
     drawShape(ctx, this);
   }
 
@@ -168,19 +165,19 @@ export function big (x: number, y: number): Asteroid {
   const xSpeed = xDir * Math.round(Math.random() * 30 + 20);
   const ySpeed = yDir * Math.round(Math.random() * 30 + 20);
 
-  return new Asteroid(x, y, genenerateShape(), xSpeed, ySpeed, 100, 100)
+  return new Asteroid(x, y, genenerateShape(), AsteroidSize.Large, xSpeed, ySpeed)
 }
 
 export function medium (x: number, y: number): Asteroid {
-  const xSpeed = 150;
+  const xSpeed = 150;  
   const ySpeed = 150;
 
-  return new Asteroid(x, y, genenerateShape(), xSpeed, ySpeed, 75, 75)
+  return new Asteroid(x, y, genenerateShape(), AsteroidSize.Medium, xSpeed, ySpeed)
 }
 
 export function small (x: number, y: number): Asteroid {
   const xSpeed = 200;
   const ySpeed = 200;
 
-  return new Asteroid(x, y, genenerateShape(), xSpeed, ySpeed, 35, 35)
+  return new Asteroid(x, y, genenerateShape(), AsteroidSize.Small, xSpeed, ySpeed)
 }

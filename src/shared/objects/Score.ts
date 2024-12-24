@@ -1,3 +1,4 @@
+import { AsteroidSize } from '../../modules/asteroid/graphics';
 import { Entity } from './Entity';
 
 
@@ -11,10 +12,10 @@ export class Score {
   }
 
   point(asteroid: Entity) {
-    if (asteroid.width === 35) {
+    if (asteroid.width === AsteroidSize.Small) {
       this.points += 100;
     
-    } else if (asteroid.width === 75) {
+    } else if (asteroid.width === AsteroidSize.Medium) {
       this.points += 50;
 
     } else {
