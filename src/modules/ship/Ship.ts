@@ -35,7 +35,7 @@ export class Ship implements Entity {
     angle: number = 0,
     status: ShipStatus = ShipStatus.Alive,
     recharge: Timer = new Timer(0.3),
-    respawn: Timer = new Timer(1),
+    respawn: Timer = new Timer(4),
     firing: boolean = false,
   ) {
     this.name = EntityType.Ship;
@@ -149,8 +149,8 @@ export class Ship implements Entity {
       return;
     }
 
-    ctx.strokeStyle = 'green';
-    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    // ctx.strokeStyle = 'green';
+    // ctx.strokeRect(this.x, this.y, this.width, this.height);
     
     ctx.strokeStyle = 'white';
     ctx.save()

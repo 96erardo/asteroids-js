@@ -13,6 +13,8 @@ export function drawShip (
 
   ctx.translate(x, y);
 
+  ctx.strokeStyle = 'white'
+
   ctx.beginPath();
   ctx.moveTo(0, height);
   ctx.lineTo(width / 2, 0);

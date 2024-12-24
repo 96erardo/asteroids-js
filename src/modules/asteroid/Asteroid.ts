@@ -145,8 +145,8 @@ export class Asteroid implements Entity {
   }
 
   draw (ctx: CanvasRenderingContext2D) {
-    ctx.strokeStyle = 'green';
-    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    // ctx.strokeStyle = 'green';
+    // ctx.strokeRect(this.x, this.y, this.width, this.height);
     drawShape(ctx, this);
   }
 
