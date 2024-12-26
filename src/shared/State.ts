@@ -1,5 +1,6 @@
 import { Ship } from '../modules/ship/Ship';
 import { Bullets } from '../modules/ship/Bullet';
+import { Manager } from '../modules/saucer/Manager';
 import { Score } from './objects/Score';
 import { QuadTree } from './objects/QuadTree';
 import * as asteroids from '../modules/asteroid/Asteroid';
@@ -10,12 +11,14 @@ export class State {
   ship: Ship;
   bullets: Bullets;
   asteroids: AsteroidsManager;
+  saucer: Manager;
   score: Score;
   quadTree: QuadTree;
 
   constructor (
     ship: Ship,
     asteroids: AsteroidsManager,
+    saucer: Manager = new Manager(),
     score: Score = new Score(),
     bullets: Bullets = new Bullets(),
     quadTree: QuadTree = new QuadTree()
@@ -24,6 +27,7 @@ export class State {
     this.bullets = bullets;
     this.score = score;
     this.asteroids = asteroids;
+    this.saucer = saucer;
     this.quadTree = quadTree;
   }
 

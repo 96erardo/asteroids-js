@@ -28,6 +28,7 @@ export class Display {
     state.bullets.draw(this.ctx);
     state.ship.draw(this.ctx);
     state.score.draw(this.ctx);
+    state.saucer.saucer?.draw(this.ctx);
 
     if (state.ship.status === 'Dead') {
       const space = new SpawnSpace();

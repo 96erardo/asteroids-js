@@ -3,6 +3,7 @@ import { Score } from './Score';
 import { QuadTree } from './QuadTree';
 import { Bullets } from '../../modules/ship/Bullet';
 import { Ship, ShipStatus } from '../../modules/ship/Ship';
+import { Manager } from '../../modules/saucer/Manager';
 import { SpawnSpace } from '../../modules/ship/SpawnSpace';
 import { Manager as AsteroidsManager } from '../../modules/asteroid/Manager';
 import { Entity, EntityType } from './Entity';
@@ -13,6 +14,7 @@ export class Collision {
   detect (
     ship: Ship,
     asteroids: AsteroidsManager,
+    saucer: Manager,
     bullets: Bullets,
     score: Score,
     quadTree: QuadTree,
@@ -59,7 +61,7 @@ export class Collision {
       })
     })
 
-    return new State(ship, asteroids, score, bullets, quadTree);
+    return new State(ship, asteroids, saucer, score, bullets, quadTree);
   }
 }
 

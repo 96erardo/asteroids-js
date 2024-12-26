@@ -20,5 +20,6 @@ export enum EntityType {
   Ship = "ship",
   Bullet = "bullet",
   Asteroid = "asteroid",
+  Saucer = "saucer",
   Other = "other"
 }

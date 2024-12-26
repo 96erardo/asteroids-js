@@ -28,11 +28,13 @@ export class Game {
     const ship = this.state.ship.update(dt, this.state, keys, cursor);
     const asteroids = this.state.asteroids.update(dt, this.state, keys, cursor);
     const bullets = this.state.bullets.update(dt, this.state, keys, cursor);
+    const saucer = this.state.saucer.update(dt, this.state, keys, cursor);
 
     this.state = this.collision.detect(
       ship, 
       asteroids, 
-      bullets, 
+      saucer,
+      bullets,
       this.state.score,
       this.state.quadTree
     );
