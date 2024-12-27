@@ -17,12 +17,13 @@ export class Manager {
     let saucer = this.saucer;
 
     if (!timer && !saucer) {
-      const time = Math.round((Math.random() * 30) + 30);
+      const time = Math.round((Math.random() * 30) + 20);
 
+      saucer = null;
       timer = new Timer(time, 0, 'running');
 
       return new Manager(saucer, timer);
-    }
+    } 
 
     timer = timer.update(dt);
 

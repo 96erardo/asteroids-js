@@ -14,7 +14,8 @@ export class Saucer implements Entity {
   xSpeed: number;
   ySpeed: number;
   collided: boolean;
-  jump: Timer
+  jump: Timer;
+  shoot: Timer;
 
   constructor (
     type: SaucerType, 
@@ -23,6 +24,7 @@ export class Saucer implements Entity {
     xSpeed: number,
     ySpeed: number,
     jump: Timer,
+    shoot: Timer,
   ) {
     this.name = EntityType.Saucer;
     this.type = type;
@@ -31,6 +33,7 @@ export class Saucer implements Entity {
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
     this.jump = jump;
+    this.shoot = shoot;
 
     if (this.type === SaucerType.Small) {
       this.width = 30;
@@ -53,15 +56,16 @@ export class Saucer implements Entity {
     const x = dir === 1 ? ((width / 2) + 20) : (CANVAS_WIDTH - ((width / 2) + 20));
     const y = Math.round((Math.random() * CANVAS_HEIGHT) - height);
     const jump = new Timer(Math.round(Math.random() * 3 + 2), 0, 'running');
-
+    const shoot = new Timer(3, 0, 'running');
     
-    return new Saucer(type, x, y, dir * 100, 0, jump);
+    return new Saucer(type, x, y, dir * 100, 0, jump, shoot);
   }
 
   update(dt: number, state: State, keys: Set<string>, cursor: Cursor): Saucer {
     let x = this.x;
     let y = this.y;
     let jump = this.jump;
+    let shoot = this.shoot;
     let ySpeed = this.ySpeed;
 
     if (x + (this.width / 2) > CANVAS_WIDTH) {
@@ -95,10 +99,21 @@ export class Saucer implements Entity {
       }
     }
 
+    if (this.shoot.isCompleted()) {
+      shoot = new Timer(3, 0, 'running');
+    
+    } else {
+      shoot = this.shoot.update(dt);
+    }
+
     x += dt * this.xSpeed;
     y += dt * ySpeed;
 
-    return new Saucer(this.type, x, y, this.xSpeed, ySpeed, jump);
+    const saucer = new Saucer(this.type, x, y, this.xSpeed, ySpeed, jump, shoot);
+
+    state.quadTree.insert(saucer);
+
+    return saucer;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -165,7 +180,7 @@ export class Saucer implements Entity {
   }
 
   onCollision(): void {
-    
+    this.collided = true;
   }
 }
 

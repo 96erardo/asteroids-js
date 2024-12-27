@@ -19,7 +19,10 @@ export class Bullet implements Entity {
   width: number;
   height: number;
 
+  from: 'ship' | 'saucer'
+
   constructor (
+    from: 'ship' | 'saucer',
     x: number,
     y: number,
     angle: number,
@@ -28,6 +31,7 @@ export class Bullet implements Entity {
   ) {
     this.name = EntityType.Bullet;
     this.collided = false;
+    this.from = from;
     this.x = x;
     this.y = y;
 
@@ -47,7 +51,7 @@ export class Bullet implements Entity {
     x += this.xSpeed * dt;
     y += this.ySpeed * dt;
 
-    const bullet = new Bullet(x, y, this.angle, this.xSpeed, this.ySpeed);
+    const bullet = new Bullet(this.from, x, y, this.angle, this.xSpeed, this.ySpeed);
 
     state.quadTree.insert(bullet);
 
@@ -93,11 +97,23 @@ export class Bullets {
 
     if (state.ship.firing) {
       list.push(new Bullet(
+          'ship',
           state.ship.x + (state.ship.width / 2) - BULLET_RADIUS,
           state.ship.y + (state.ship.height / 2) - BULLET_RADIUS,
           state.ship.angle
         )
       )
+    }
+    
+    const { saucer } = state.saucer;
+
+    if (saucer && saucer.shoot.isCompleted()) {
+      list.push(new Bullet(
+        'saucer',
+        saucer.x + (saucer.width / 2) - BULLET_RADIUS,
+        saucer.y + (saucer.height / 2) - BULLET_RADIUS,
+        Math.round(Math.random() * 2 * Math.PI)
+      ))
     }
     
     return new Bullets(list);
